@@ -20,7 +20,6 @@ from statistics import mean, stdev
 import scipy.stats as st
 
 
-
 def data_processing():
     dataframe = pd.read_csv('./train_data.txt', header=None)  # Load dataset
     dataframe = dataframe.drop(dataframe.columns[[0, 27]], axis = 1) #Removed first column containing participant IDs and UPDRS column
