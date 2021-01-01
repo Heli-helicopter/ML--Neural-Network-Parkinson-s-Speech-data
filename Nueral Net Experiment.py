@@ -120,7 +120,7 @@ def NueralNetwork_1layer(x_train, x_test, y_train, y_test, n_1, af_1):
 
 def NueralNetwork_2ayer(x_train, x_test, y_train, y_test, n_1, af_1):
 
-    "This function is a neural network eith only 1 hidden layer to test different numbers of neurons."
+    "This function is a neural network only 1 hidden layer to test different numbers of neurons."
     
     print('hidden layer 1: ', n_1, af_1)
     
