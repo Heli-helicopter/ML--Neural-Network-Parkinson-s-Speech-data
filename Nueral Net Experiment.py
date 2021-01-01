@@ -80,9 +80,10 @@ def Standardization(x_train, x_test):
     #plt5 = sns.pairplot((df.drop('25', axis=1)), hue='28')
     #plt5.savefig('plot5.png')
 
-def NueralNetwork_1layer(x_train, x_test, y_train, y_test, n_1, af_1):
+def NueralNetwork_Setnodes(x_train, x_test, y_train, y_test, n_1, af_1):
 
-    "This function is a neural network with only 1 hidden layer. This function allows testing various optimisers, learning rates, and momentums while keeping all else constant."
+    "This function is a neural network consisting of 1 hidden layer with 10 nodes. "
+    "This function allows testing various optimisers, learning rates, and momentums while keeping all else constant for comparison."
     
     print('hidden layer 1: ', n_1, af_1)
     
@@ -118,9 +119,10 @@ def NueralNetwork_1layer(x_train, x_test, y_train, y_test, n_1, af_1):
     return total_test_acc, test_acc_CI, total_train_acc, train_acc_CI
 
 
-def NueralNetwork_2ayer(x_train, x_test, y_train, y_test, n_1, af_1):
+def NueralNetwork_1layer(x_train, x_test, y_train, y_test, n_1, af_1):
 
-    "This function is a neural network only 1 hidden layer to test different numbers of neurons."
+    "This function is a neural network consisting of 1 hidden layer. The number of nodes is varied by calling the function with different values for n_1 variable."
+    "This function allows testing of different numbers of nodes in the first layer. Activation function can be altered by calling the function with different input for the af_1 variable."
     
     print('hidden layer 1: ', n_1, af_1)
     
@@ -155,13 +157,51 @@ def NueralNetwork_2ayer(x_train, x_test, y_train, y_test, n_1, af_1):
 
     return total_test_acc, test_acc_CI, total_train_acc, train_acc_CI
 
+def NueralNetwork_2layers(x_train, x_test, y_train, y_test, n_1, af_1, n_2, af_2):
+    
+    "This function is a neural network consisting of 2 hidden layers. The number of nodes is varied by calling the function with different values for n_1, and n_2 variables."
+    "This function allows testing of different numbers of nodes in the first layer. Activation function for each layer can be altered by calling the function with different input for the af_1 and af_2 variables."
+    
+    print('hidden layer 1: ', n_1, af_1)
+    print('hidden layer 2: ', n_2, af_2)
+
+    total_test_acc = []
+    total_test_error = []
+
+    total_train_acc = []
+    total_train_error = []
+    
+    for _ in range(0,10):
+        model = Sequential()
+        model.add(Dense(n_1, input_dim=26, activation=af_1))
+        model.add(Dense(n_2, activation=af_2))
+        model.add(Dense(1, activation='sigmoid'))
+        model.compile(loss='binary_crossentropy', optimizer=adam(learning_rate=0.001,beta_1=0.075), metrics=['accuracy'])
+
+        model.fit(x_train, y_train, validation_data=(x_test, y_test), epochs=100, verbose=0)
+        acc_test = model.evaluate(x_test, y_test, verbose=0)
+        acc_train = model.evaluate(x_train, y_train, verbose=0)
+
+        total_test_acc.append(acc_test[1])
+        total_test_error.append(acc_test[0])
+
+        total_train_acc.append(acc_train[1])
+        total_train_error.append(acc_train[0])
+
+    test_acc_CI = st.t.interval(0.95, len(total_test_acc)-1, loc=np.mean(total_test_acc), scale=st.sem(total_test_acc))
+    train_acc_CI = st.t.interval(0.95, len(total_train_acc)-1, loc=np.mean(total_train_acc), scale=st.sem(total_train_acc))
+    
+    return total_test_acc, test_acc_CI, total_train_acc, train_acc_CI
+
 def NueralNetwork_3layers(x_train, x_test, y_train, y_test, n_1, af_1, n_2, af_2, n_3, af_3):
+    
+    "This function is a neural network consisting of 3 hidden layers. The number of nodes is varied by calling the function with different values for n_1, n_2, and n_3 variables."
+    "This function allows testing of different numbers of nodes in the first layer. Activation function for each layer can be altered by calling the function with different input for the af_1, af_2, and af_3 variables."
     
     print('hidden layer 1: ', n_1, af_1)
     print('hidden layer 2: ', n_2, af_2)
     print('hidden layer 3: ', n_3, af_3)
    
-
     total_test_acc = []
     total_test_error = []
 
@@ -193,6 +233,9 @@ def NueralNetwork_3layers(x_train, x_test, y_train, y_test, n_1, af_1, n_2, af_2
 
 def NueralNetwork_4layers(x_train, x_test, y_train, y_test, n_1, af_1, n_2, af_2, n_3, af_3, n_4, af_4):
     
+    "This function is a neural network consisting of 4 hidden layers. The number of nodes is varied by calling the function with different values for n_1, n_2, n_3, and n_4 variables."
+    "This function allows testing of different numbers of nodes in the first layer. Activation function for each layer can be altered by calling the function with different input for the af_1, af_2, af_3, and af_4 variables."
+
     print('hidden layer 1: ', n_1, af_1)
     print('hidden layer 2: ', n_2, af_2)
     print('hidden layer 3: ', n_3, af_3)
@@ -242,8 +285,9 @@ def main():
 
     #for i in [1, 5, 10, 15, 20, 25, 30]:
       
-        #test_acc, test_CI, train_acc, train_CI = NueralNetwork_1layer(x_train_std, x_test_std, y_train, y_test, 10, 'softplus', SGD(lr=0.075, momentum=0.001))
-        #test_acc, test_CI, train_acc, train_CI = NueralNetwork_2ayer(x_train_std, x_test_std, y_train, y_test, i, 'tanh')
+        #test_acc, test_CI, train_acc, train_CI = NueralNetwork_Setnodes(x_train_std, x_test_std, y_train, y_test, 10, 'softplus', SGD(lr=0.075, momentum=0.001))
+        #test_acc, test_CI, train_acc, train_CI = NueralNetwork_1layer(x_train_std, x_test_std, y_train, y_test, i, 'tanh')
+        #test_acc, test_CI, train_acc, train_CI = NueralNetwork_1layer(x_train_std, x_test_std, y_train, y_test, 30, 'tanh', i, 'softplus')
         #test_acc, test_CI, train_acc, train_CI = NueralNetwork_3layers(x_train_std, x_test_std, y_train, y_test, 30, 'tanh', 30, 'softplus', i, 'softplus')
         #test_acc, test_CI, train_acc, train_CI = NueralNetwork_4layers(x_train_std, x_test_std, y_train, y_test, 30, 'tanh', 30, 'softplus', 5, 'softplus', i, 'softplus')
         
